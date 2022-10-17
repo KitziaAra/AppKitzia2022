@@ -1,0 +1,191 @@
+package com.example.myappkitzia;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.example.myappkitzia.Recursos.Digest;
+import com.example.myappkitzia.Recursos.MyInfo;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Login extends AppCompatActivity {
+    public List<MyInfo> list = null;
+    public static String TAG = "mensaje";
+    String json = null;
+    public EditText txtUsr, txtContra;
+    private Button btnInicio;
+    private Button btnOlv;
+    private Button btnReg;
+    private String usuario, contra;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+
+        txtUsr = findViewById(R.id.txtUsuario);
+        txtContra = findViewById(R.id.txtContra);
+        btnInicio = findViewById(R.id.btnInicio);
+        btnReg = findViewById(R.id.btnReg);
+        btnOlv = findViewById(R.id.btnOlv);
+
+
+    }
+
+/* para checar si existe el archivo, si no hay deshabilita los botones */
+    @Override
+    public void onResume(){
+        super.onResume();
+        setContentView(R.layout.activity_login);
+
+
+        btnInicio = findViewById(R.id.btnInicio);
+        btnReg = findViewById(R.id.btnReg);
+        btnOlv = findViewById(R.id.btnOlv);
+
+        if(!isFileExits()){
+            btnOlv.setEnabled(false);
+            btnInicio.setEnabled(false);
+        }
+    }
+
+    public void acceder() {
+        Digest sha1 = new Digest();
+
+        int i = 0;
+        for (MyInfo myInfo : list) {
+            String conjunto = usuario + contra;
+            byte[] txtByte = sha1.createSha1(conjunto);
+            String pswdCifr = sha1.bytesToHex(txtByte);
+
+            if (myInfo.getNombre().equals(usuario) && myInfo.getPswd().equals(pswdCifr)) {
+                Intent intent = new Intent(Login.this, Principal.class);
+                startActivity(intent);
+                i = 1;
+
+            }
+        }
+        if (i == 0) {
+            Toast.makeText(getApplicationContext(), "El usuario o contraseña son incorrectos ", Toast.LENGTH_LONG).show();
+        }
+    }
+
+
+/* para checar el archivo */
+
+    private File getFile() {
+        return new File(getDataDir(), Registro.archivo);
+    }
+
+    private boolean isFileExits() {
+        File file = getFile();
+        if (file == null) {
+            return false;
+        }
+        return file.isFile() && file.exists();
+    }
+
+/* leer el archivo */
+
+    private boolean Leer(){
+        if(!isFileExits()){
+            Log.d(TAG, "no hay archivo");
+            return false;
+
+        }
+
+        File file = getFile();
+        FileInputStream fileInputStream = null;
+        byte bytes[]= null;
+        bytes = new byte[(int)file.length()];
+
+        try{
+            fileInputStream = new FileInputStream(file);
+            fileInputStream.read(bytes);
+            json = new String(bytes);
+            Log.d(TAG, json);
+            fileInputStream.close();
+        }
+        catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void json2List(String json) {
+        Gson gson = null;
+        String mnsj = null;
+
+        if (json == null || json.length() == 0) {
+            Toast.makeText(getApplicationContext(), "Error JSON null or empty", Toast.LENGTH_LONG).show();
+        }
+        gson = new Gson();
+        Type listType = new TypeToken<ArrayList<MyInfo>>() {
+        }.getType();
+        list = gson.fromJson(json, listType);
+        Log.d(TAG, list.toString());
+        if (list == null) {
+            Toast.makeText(getApplicationContext(), "Error list null or empty", Toast.LENGTH_LONG).show();
+            return;
+        }
+    }
+/* botones */
+
+    public void registro(View view){
+        Intent intent = new Intent(this, Registro.class);
+        startActivity(intent);
+    }
+    public void olvido(View view){
+        Intent intent = new Intent(this, Olvido.class);
+        startActivity(intent);
+    }
+
+    public void iniciar(View view){
+        if(txtUsr.getText().length() == 0 | txtContra.getText().length() == 0){
+            Log.d(TAG, txtUsr.getText().toString());
+            Log.d(TAG, txtContra.getText().toString());
+            Toast.makeText(getApplicationContext(), "Llena todos los campos por favor", Toast.LENGTH_LONG).show();
+            return;
+        }
+        Leer();
+        json2List(json);
+        usuario = txtUsr.getText().toString();
+        contra = txtContra.getText().toString();
+        Digest sha1 = new Digest();
+
+        int i = 0;
+        for (MyInfo myInfo : list) {
+            String conjunto = usuario + contra;
+            byte[] txtByte = sha1.createSha1(conjunto);
+            String pswdCifr = sha1.bytesToHex(txtByte);
+
+            if (myInfo.getNombre().equals(usuario) && myInfo.getPswd().equals(pswdCifr)) {
+                Intent intent = new Intent(Login.this, Principal.class);
+                startActivity(intent);
+                i = 1;
+
+            }
+        }
+        if (i == 0) {
+            Toast.makeText(getApplicationContext(), "El usuario o contraseña son incorrectos ", Toast.LENGTH_LONG).show();
+        }
+    }
+
+}

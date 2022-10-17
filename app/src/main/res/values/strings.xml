@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">MyAppKitzia</string>
+    <string name="title_activity_registro">Registro</string>
+    <string name="txtView1">Usuario</string>
+    <string name="txtView2">Contraseña</string>
+    <string name="txtView3">Inicio de sesión</string>
+    <string name="btn1">Iniciar</string>
+    <string name="btn2">Olvidé mi contraseña</string>
+    <string name="btn3">O mejor, regístrate</string>
+
+    <string name="txt1">Registro</string>
+    <string name="txt2">Ingresa los siguientes datos</string>
+    <string name="txt3">Nombre de usuario:</string>
+    <string name="txt4">Contraseña:</string>
+    <string name="txt5">Edad:</string>
+    <string name="txt6">Género:</string>
+    <string name="txt7">Elige una estación:</string>
+    <string name="txt8">Correo:</string>
+    <string name="txt9">Fecha de nac.:</string>
+    <string name="txt10">¿Café?</string>
+    <string name="btn4">Registrarse</string>
+    <string name="btn5">O si ya tienes cuenta, inicia sesión</string>
+</resources>
