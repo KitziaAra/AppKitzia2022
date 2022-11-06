@@ -20,4 +20,5 @@
     <string name="txt10">¿Café?</string>
     <string name="btn4">Registrarse</string>
     <string name="btn5">O si ya tienes cuenta, inicia sesión</string>
+    <string name="oops">Oops</string>
 </resources>

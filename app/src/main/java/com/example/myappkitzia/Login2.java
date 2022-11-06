@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.example.myappkitzia.Recursos.Digest;
 import com.example.myappkitzia.Recursos.MyInfo;
+import com.example.myappkitzia.Recursos.Nya;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -19,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -128,7 +130,13 @@ public class Login2 extends AppCompatActivity {
         int i = 0;
         for (MyInfo myInfo : list) {
             if (myInfo.getNombre().equals(usr) && myInfo.getPswd().equals(pswdCifr)) {
-                Intent intent = new Intent(Login2.this, Principal.class);
+                Intent intent = new Intent(getBaseContext(), Principal.class);
+                Nya testJson = new Nya();
+                testJson.setNombre(usr);
+                testJson.setPswd(passw);
+                intent.putExtra("Hola", String.format("Hola mundo %d" , (int)(Math.random()*1000) ));
+                intent.putExtra("Usuario", usr);
+                intent.putExtra("Contraseña", pswdCifr);
                 startActivity(intent);
                 i = 1;
 
@@ -137,5 +145,9 @@ public class Login2 extends AppCompatActivity {
         if (i == 0) {
             Toast.makeText(getApplicationContext(), "El usuario o contraseña son incorrectos ", Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void enviarExtra(){
+
     }
 }

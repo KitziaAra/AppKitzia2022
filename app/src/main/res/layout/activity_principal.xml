@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="128dp"
         android:fontFamily="cursive"
-        android:text="No hay nada aquí... aún"
+        android:text="Ya hay algo aquí :D"
         android:textAlignment="center"
         android:textColor="@color/azulito"
         android:textSize="34sp"
@@ -22,4 +22,18 @@
         app:layout_constraintHorizontal_bias="0.489"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textito"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="92dp"
+        android:text="@string/oops"
+        android:textColor="@color/azulito"
+        android:textSize="34sp"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
