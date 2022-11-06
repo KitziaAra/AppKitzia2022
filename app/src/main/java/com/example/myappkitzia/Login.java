@@ -37,8 +37,8 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        txtUsr = findViewById(R.id.txtUsuario);
-        txtContra = findViewById(R.id.txtContra);
+        txtUsr = (EditText) findViewById(R.id.txtUsuario);
+        txtContra = (EditText) findViewById(R.id.txtContra);
         btnInicio = findViewById(R.id.btnInicio);
         btnReg = findViewById(R.id.btnReg);
         btnOlv = findViewById(R.id.btnOlv);
@@ -52,11 +52,6 @@ public class Login extends AppCompatActivity {
         super.onResume();
         setContentView(R.layout.activity_login);
 
-
-        btnInicio = findViewById(R.id.btnInicio);
-        btnReg = findViewById(R.id.btnReg);
-        btnOlv = findViewById(R.id.btnOlv);
-
         if(!isFileExits()){
             btnOlv.setEnabled(false);
             btnInicio.setEnabled(false);
@@ -64,24 +59,8 @@ public class Login extends AppCompatActivity {
     }
 
     public void acceder() {
-        Digest sha1 = new Digest();
-
-        int i = 0;
-        for (MyInfo myInfo : list) {
-            String conjunto = usuario + contra;
-            byte[] txtByte = sha1.createSha1(conjunto);
-            String pswdCifr = sha1.bytesToHex(txtByte);
-
-            if (myInfo.getNombre().equals(usuario) && myInfo.getPswd().equals(pswdCifr)) {
-                Intent intent = new Intent(Login.this, Principal.class);
-                startActivity(intent);
-                i = 1;
-
-            }
-        }
-        if (i == 0) {
-            Toast.makeText(getApplicationContext(), "El usuario o contraseña son incorrectos ", Toast.LENGTH_LONG).show();
-        }
+        Intent intent = new Intent(Login.this, Principal.class);
+        startActivity(intent);
     }
 
 
@@ -158,16 +137,19 @@ public class Login extends AppCompatActivity {
     }
 
     public void iniciar(View view){
-        if(txtUsr.getText().length() == 0 | txtContra.getText().length() == 0){
-            Log.d(TAG, txtUsr.getText().toString());
-            Log.d(TAG, txtContra.getText().toString());
+        usuario = txtUsr.getText().toString();
+        contra = txtContra.getText().toString();
+        Log.d(TAG, usuario);
+        Log.d(TAG, contra);
+
+        if(usuario.length()== 0 | contra.length() == 0){
+
             Toast.makeText(getApplicationContext(), "Llena todos los campos por favor", Toast.LENGTH_LONG).show();
             return;
         }
         Leer();
         json2List(json);
-        usuario = txtUsr.getText().toString();
-        contra = txtContra.getText().toString();
+
         Digest sha1 = new Digest();
 
         int i = 0;

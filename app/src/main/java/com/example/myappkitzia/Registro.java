@@ -209,7 +209,7 @@ public class Registro extends AppCompatActivity {
 /* botones */
 
     public void inicio(View view) {
-        Intent intent = new Intent(this, Login.class);
+        Intent intent = new Intent(this, Login2.class);
         startActivity(intent);
     }
 }

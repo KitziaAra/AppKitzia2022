@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#DCEDFF"
     android:onClick="registro"
-    tools:context=".Login">
+    tools:context=".Login2">
 
     <TextView
         android:id="@+id/textView1"
@@ -58,7 +58,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:backgroundTint="@color/azul_medio"
-        android:onClick="iniciar"
         android:text="@string/btn1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -84,7 +83,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:backgroundTint="@color/azulito"
-        android:onClick="olvido"
         android:text="@string/btn2"
         android:textColor="#FF747679"
         app:layout_constraintEnd_toEndOf="parent"
