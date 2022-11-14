@@ -4,22 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ranni"
+    android:background="@mipmap/ranni2"
     tools:context=".Principal">
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="128dp"
+        android:layout_marginTop="68dp"
         android:fontFamily="cursive"
         android:text="Ya hay algo aquí :D"
         android:textAlignment="center"
-        android:textColor="@color/azulito"
-        android:textSize="34sp"
+        android:textColor="@color/azul_medio"
+        android:textSize="48sp"
         android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.489"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -27,13 +26,22 @@
         android:id="@+id/textito"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="92dp"
+        android:layout_marginTop="36dp"
         android:text="@string/oops"
-        android:textColor="@color/azulito"
+        android:textColor="@color/azul_claro"
         android:textSize="34sp"
         android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <ListView
+        android:id="@+id/listViewID"
+        android:layout_width="399dp"
+        android:layout_height="401dp"
+        android:layout_marginTop="128dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textito" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
