@@ -1,10 +1,14 @@
 package com.example.myappkitzia;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -15,6 +19,10 @@ import com.example.myappkitzia.Adapter.MiAdapter;
 import com.example.myappkitzia.Recursos.MyData;
 import com.example.myappkitzia.Recursos.Nya;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +30,9 @@ public class Principal extends AppCompatActivity {
     public String TAG = "Principal";
     private ListView listView;
     private List<MyData> list;
+    public String archivo = "";
+    public String usuario = "";
+    public String json= "";
     private int[]logos ={R.mipmap.discord,R.mipmap.yutu, R.mipmap.tumblur, R.mipmap.tuiter, R.mipmap.redit};
 
     @Override
@@ -38,6 +49,7 @@ public class Principal extends AppCompatActivity {
         String object = null;
         TextView textito = findViewById(R.id.textito);
         Intent intent = getIntent();
+
         if (intent != null) {
             aux = intent.getStringExtra("Hola");
             if (aux != null && aux.length() > 0) {
@@ -46,7 +58,9 @@ public class Principal extends AppCompatActivity {
             if (intent.getExtras() != null) {
                 object = intent.getStringExtra("Usuario");
                 if (object != null) {
+                    usuario = object;
                     textito.setText(object);
+                    archivo = object+".json";
                     Log.d(TAG, object);
 
                 }
@@ -57,6 +71,10 @@ public class Principal extends AppCompatActivity {
 
         }
 
+        if(isFileExits()){
+
+        }
+/*
         for (int i = 0; i<5; i++){
             myData = new MyData();
             myData.setPswd(String.format("Contraseña: %d" , (int)(Math.random()*1000000)));
@@ -84,6 +102,8 @@ public class Principal extends AppCompatActivity {
 
             list.add(myData);
         }
+
+ */
         MiAdapter myAdapter = new MiAdapter(list, getBaseContext());
         listView.setAdapter(myAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -94,5 +114,71 @@ public class Principal extends AppCompatActivity {
             }
         });
 
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        boolean flag = false;
+        flag = super.onCreateOptionsMenu(menu);
+        MenuInflater menuInflater = null;
+        menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.mi_menu, menu);
+
+        return flag;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        String selection = null;
+        switch (item.getItemId()){
+            case R.id.menuNuevoId:
+                selection = String.format("Option %s" , item.getTitle().toString());
+                break;
+
+            default:
+                selection = "No hay ninguno seleccionado";
+                break;
+        }
+        Toast.makeText(this, selection, Toast.LENGTH_SHORT).show();
+        return super.onOptionsItemSelected(item);
+    }
+
+    private File getFile() {
+        return new File(getDataDir(), archivo);
+    }
+
+    private boolean isFileExits() {
+        File file = getFile();
+        if (file == null) {
+            return false;
+        }
+        return file.isFile() && file.exists();
+    }
+
+    public boolean Read() {
+        if (!isFileExits()) {
+            return false;
+        }
+        File file = getFile();
+        FileInputStream fileInputStream = null;
+        byte[] bytes = null;
+        bytes = new byte[(int) file.length()];
+        try {
+            fileInputStream = new FileInputStream(file);
+            fileInputStream.read(bytes);
+            json = new String(bytes);
+            Log.d(TAG, json);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+    public void aGuardar(){
+        Intent intent =  new Intent(getBaseContext(), Agregar.class);
+        intent.putExtra("Usuario", usuario);
+        startActivity(intent);
     }
 }

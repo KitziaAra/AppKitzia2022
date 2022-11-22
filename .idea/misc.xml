@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Quinto semestre/Intr a Automatizacion de pruebas/MyAppKitzia/app/src/main/res/layout-w1240dp/content_scrolling.xml" value="0.11847389558232932" />
+        <entry key="..\:/Quinto semestre/Intr a Automatizacion de pruebas/MyAppKitzia/app/src/main/res/layout/activity_agregar.xml" value="0.31431159420289856" />
         <entry key="..\:/Quinto semestre/Intr a Automatizacion de pruebas/MyAppKitzia/app/src/main/res/layout/activity_listita.xml" value="0.31431159420289856" />
         <entry key="..\:/Quinto semestre/Intr a Automatizacion de pruebas/MyAppKitzia/app/src/main/res/layout/activity_login.xml" value="0.22327898550724637" />
         <entry key="..\:/Quinto semestre/Intr a Automatizacion de pruebas/MyAppKitzia/app/src/main/res/layout/activity_login2.xml" value="0.31431159420289856" />
@@ -13,6 +14,7 @@
         <entry key="..\:/Quinto semestre/Intr a Automatizacion de pruebas/MyAppKitzia/app/src/main/res/layout/activity_registro.xml" value="0.33" />
         <entry key="..\:/Quinto semestre/Intr a Automatizacion de pruebas/MyAppKitzia/app/src/main/res/layout/content_scrolling.xml" value="0.22327898550724637" />
         <entry key="..\:/Quinto semestre/Intr a Automatizacion de pruebas/MyAppKitzia/app/src/main/res/menu/menu_registro.xml" value="0.184375" />
+        <entry key="..\:/Quinto semestre/Intr a Automatizacion de pruebas/MyAppKitzia/app/src/main/res/menu/mi_menu.xml" value="0.35885416666666664" />
       </map>
     </option>
   </component>

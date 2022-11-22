@@ -21,4 +21,10 @@
     <string name="btn4">Registrarse</string>
     <string name="btn5">O si ya tienes cuenta, inicia sesión</string>
     <string name="oops">Oops</string>
+
+    <string name="NuevoId">Nuevo</string>
+    <string name="titulo">Agregar registro</string>
+    <string name="text1">Sitio web:</string>
+    <string name="text2">Contraseña:</string>
+    <string name="boton">Guardar</string>
 </resources>
