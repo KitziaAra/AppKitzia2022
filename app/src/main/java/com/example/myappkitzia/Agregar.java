@@ -68,7 +68,7 @@ public class Agregar extends AppCompatActivity {
                 if (isNotNullAndNotEmpty(KEY)){
                     desUtil.addStringKeyBase64(KEY);
                 }
-                if (isNotNullAndNotEmpty(sitioWeb) || isNotNullAndNotEmpty(contraseña)) {
+                if (!isNotNullAndNotEmpty(sitioWeb) || !isNotNullAndNotEmpty(contraseña)) {
                     Toast.makeText(getApplicationContext(), "Vacío", Toast.LENGTH_LONG).show();
                     return;
                 }

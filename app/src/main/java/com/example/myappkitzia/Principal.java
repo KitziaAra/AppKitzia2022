@@ -16,33 +16,40 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myappkitzia.Adapter.MiAdapter;
+import com.example.myappkitzia.Recursos.DesUtil;
 import com.example.myappkitzia.Recursos.MyData;
 import com.example.myappkitzia.Recursos.Nya;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Principal extends AppCompatActivity {
     public String TAG = "Principal";
     private ListView listView;
-    private List<MyData> list;
+    public MyData myData1;
+    private List<MyData> lista;
+    public static final String KEY = "+4xij6jQRSBdCymMxweza/uMYo+o0EUg";
     public String archivo = "";
     public String usuario = "";
     public String json= "";
-    private int[]logos ={R.mipmap.discord,R.mipmap.yutu, R.mipmap.tumblur, R.mipmap.tuiter, R.mipmap.redit};
+    public DesUtil desUtil;
+    private int[]logos ={R.mipmap.img,R.mipmap.img_2, R.mipmap.img_1};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
 
-        MyData myData = null;
+        desUtil = new DesUtil();
         listView = (ListView) findViewById(R.id.listViewID);
-        list = new ArrayList<MyData>();
+        lista = new ArrayList<MyData>();
 
         String aux = null;
         Nya testJson = null;
@@ -51,10 +58,6 @@ public class Principal extends AppCompatActivity {
         Intent intent = getIntent();
 
         if (intent != null) {
-            aux = intent.getStringExtra("Hola");
-            if (aux != null && aux.length() > 0) {
-                textito.setText(aux);
-            }
             if (intent.getExtras() != null) {
                 object = intent.getStringExtra("Usuario");
                 if (object != null) {
@@ -62,7 +65,6 @@ public class Principal extends AppCompatActivity {
                     textito.setText(object);
                     archivo = object+".json";
                     Log.d(TAG, object);
-
                 }
                 else{
                     textito.setText("oops");
@@ -72,7 +74,36 @@ public class Principal extends AppCompatActivity {
         }
 
         if(isFileExits()){
+            Read();
+            json2List(json);
+            Log.d(TAG, json);
 
+            for (MyData myData1 : lista){
+                if (isNotNullAndNotEmpty(KEY)){
+                    desUtil.addStringKeyBase64(KEY);
+                }
+
+                String usuario = myData1.getNombre();
+                String contra = myData1.getPswd();
+                String usr = desUtil.desCifrar(usuario);
+                String pswd = desUtil.desCifrar(contra);
+
+                Log.d(TAG, usr);
+                Log.d(TAG, pswd);
+
+                myData1.setLogo(logos[(int)(Math.random() *3 )]);
+                myData1.setNombre(usr);
+                myData1.setPswd(pswd);
+
+                lista.add(myData1);
+                MiAdapter myAdapter = new MiAdapter(lista, getBaseContext());
+                listView.setAdapter(myAdapter);
+            }
+
+
+        }
+        else{
+            Toast.makeText(getApplicationContext(), "No hay archivo", Toast.LENGTH_LONG).show();
         }
 /*
         for (int i = 0; i<5; i++){
@@ -104,15 +135,7 @@ public class Principal extends AppCompatActivity {
         }
 
  */
-        MiAdapter myAdapter = new MiAdapter(list, getBaseContext());
-        listView.setAdapter(myAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
-            {
-                Toast.makeText(getBaseContext(), list.get(i).getPswd(),Toast.LENGTH_SHORT).show();
-            }
-        });
+
 
     }
     @Override
@@ -132,6 +155,7 @@ public class Principal extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.menuNuevoId:
                 selection = String.format("Option %s" , item.getTitle().toString());
+                aGuardar();
                 break;
 
             default:
@@ -175,6 +199,27 @@ public class Principal extends AppCompatActivity {
         return false;
     }
 
+    public void json2List(String json) {
+        Gson gson = null;
+        String mensaje = null;
+        if (json == null || json.length() == 0) {
+            Toast.makeText(getApplicationContext(), "Error json null or empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        gson = new Gson();
+        Type listType = new TypeToken<ArrayList<MyData>>() {
+        }.getType();
+        lista = gson.fromJson(json, listType);
+        if (lista == null || lista.size() == 0) {
+            Toast.makeText(getApplicationContext(), "Error list is null or empty", Toast.LENGTH_LONG).show();
+            return;
+        }
+    }
+
+    public boolean isNotNullAndNotEmpty( String aux )
+    {
+        return aux != null && aux.length() > 0;
+    }
 
     public void aGuardar(){
         Intent intent =  new Intent(getBaseContext(), Agregar.class);

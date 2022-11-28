@@ -35,12 +35,17 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_weight="1"
-        app:srcCompat="@android:drawable/ic_menu_edit" />
+        android:background="@color/azulito"
+        android:foreground="@mipmap/editar1"
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <ImageButton
         android:id="@+id/btnAñadir"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_weight="1"
-        app:srcCompat="@android:drawable/ic_menu_add" />
+        android:background="@color/azulito"
+        android:foreground="@mipmap/borrar"
+        app:srcCompat="@android:drawable/ic_menu_add"
+        tools:ignore="SpeakableTextPresentCheck" />
 </LinearLayout>

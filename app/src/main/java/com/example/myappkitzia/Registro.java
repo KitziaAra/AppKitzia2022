@@ -70,6 +70,25 @@ public class Registro extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Vacío", Toast.LENGTH_LONG).show();
                     return;
                 }
+                boolean TipoCorreo = false;
+                String Mail = "";
+                for(int x = 0 ; x < txtCorreo.getText().length(); x++) {
+                    if (txtCorreo.getText().charAt(x) == '@') {
+                        for (int y = x; y < txtCorreo.length(); y++) {
+                            Mail = Mail + txtCorreo.getText().charAt(y);
+                        }
+                        if ("@gmail.com".equals(Mail) || "@hotmail.com".equals(Mail) || "@outlook.com".equals(Mail)) {
+                            TipoCorreo = true;
+                        }
+                        break;
+                    }
+                }
+                if(TipoCorreo == false){
+                    Toast.makeText(getApplicationContext(), "Correo inválido", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+
                 String Nombre = txtNombre.getText().toString();
                 String Contra = txtContra.getText().toString();
                 String Edad = txtEdad.getText().toString();

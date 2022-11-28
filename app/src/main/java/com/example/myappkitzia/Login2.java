@@ -76,6 +76,7 @@ public class Login2 extends AppCompatActivity {
 
     }
 
+
     public boolean Read() {
         if (!isFileExits()) {
             return false;
