@@ -72,7 +72,8 @@ public class Agregar extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Vacío", Toast.LENGTH_LONG).show();
                     return;
                 }
-
+                String paLog = sitioWeb+contraseña;
+                Log.d(TAG, paLog);
                 txtCifr1 = desUtil.cifrar(sitioWeb);
                 txtCfr2 = desUtil.cifrar(contraseña);
 
