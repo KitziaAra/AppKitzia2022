@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import com.example.myappkitzia.Recursos.Digest;
 import com.example.myappkitzia.Recursos.MyInfo;
+import com.example.myappkitzia.SQLite.BDQuerys;
+import com.example.myappkitzia.SQLite.Usuario;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -146,6 +148,36 @@ public class Registro extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 Toast.makeText(getApplicationContext(), "ERROR", Toast.LENGTH_LONG).show();
+
+/* no jalo aaaaaaaaaaaaaaah
+
+                String mnsj = "";
+                try {
+                    BDQuerys bdQuerys = new BDQuerys(Registro.this);
+                    Usuario usuario = new Usuario();
+                    usuario.setUsuario(Nombre);
+                    usuario.setContraseña(pswdCifr);
+                    usuario.setEdad(Integer.parseInt(Edad));
+                    usuario.setCorreo(Correo);
+                    usuario.setFecha(Fecha);
+                    usuario.setEstacion(estacion);
+                    usuario.setGenero(Genero);
+                    usuario.setCafe(String.valueOf(cafe));
+
+                    long estado = bdQuerys.agregarCuenta(Nombre, pswdCifr, Integer.parseInt(Edad), Correo, Fecha, estacion, Genero, String.valueOf(cafe));
+
+                    if (estado>0){
+                        mnsj = "Usuario registrado";
+                        vaciar();
+                    }
+                    else {
+                        mnsj = "Error al registrar";
+                    }
+                }
+                catch (Exception e){
+                    mnsj = e.toString();
+                }
+                Toast.makeText(Registro.this, mnsj, Toast.LENGTH_SHORT).show();*/
             }
         });
     }
@@ -165,7 +197,12 @@ public class Registro extends AppCompatActivity {
     }
 
 
-/* para pasar de lista a JSON */
+    /*EL CEMENTERIO >:D*/
+
+
+
+
+ //para pasar de lista a JSON
 
     public String lista2Json(String nom, String contra, String e, String gen, String email, String fech, String est, boolean cafe) {
         MyInfo myInfo = null;
@@ -202,7 +239,7 @@ public class Registro extends AppCompatActivity {
         return json;
     }
 
-/* para escribir en el archivo */
+ //para escribir en el archivo
 
     private File getFile() {
         return new File(getDataDir(), archivo);
@@ -225,10 +262,12 @@ public class Registro extends AppCompatActivity {
         return false;
     }
 
-/* botones */
+ //botones
 
     public void inicio(View view) {
         Intent intent = new Intent(this, Login2.class);
         startActivity(intent);
     }
+
+
 }

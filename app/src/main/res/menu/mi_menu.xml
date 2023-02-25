@@ -5,4 +5,7 @@
         android:id="@+id/menuNuevoId"
         android:icon="@android:drawable/btn_plus"
         android:title="@string/NuevoId" />
+    <item
+        android:id="@+id/videoId"
+        android:title="@string/VideoId" />
 </menu>

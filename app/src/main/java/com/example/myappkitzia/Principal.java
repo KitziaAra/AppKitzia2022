@@ -9,8 +9,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -158,6 +156,11 @@ public class Principal extends AppCompatActivity {
                 aGuardar();
                 break;
 
+            case R.id.videoId:
+                selection = String.format("Option %s", item.getTitle().toString());
+                aVideo();
+                break;
+
             default:
                 selection = "No hay ninguno seleccionado";
                 break;
@@ -225,5 +228,11 @@ public class Principal extends AppCompatActivity {
         Intent intent =  new Intent(getBaseContext(), Agregar.class);
         intent.putExtra("Usuario", usuario);
         startActivity(intent);
+    }
+
+    public void aVideo(){
+        Intent intent =  new Intent(getBaseContext(), Yutubcito.class);
+        startActivity(intent);
+
     }
 }
