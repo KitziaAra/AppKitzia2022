@@ -9,14 +9,19 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myappkitzia.Adapter.MiAdapter;
+import com.example.myappkitzia.Adapter.MiAdapterEdit;
+import com.example.myappkitzia.Adapter.MiAdapterQuitar;
 import com.example.myappkitzia.Recursos.DesUtil;
 import com.example.myappkitzia.Recursos.MyData;
-import com.example.myappkitzia.Recursos.Nya;
+import com.example.myappkitzia.SQLite.BDCuenta;
+import com.example.myappkitzia.SQLite.BDInfo;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -30,16 +35,15 @@ import java.util.List;
 
 public class Principal extends AppCompatActivity {
     public String TAG = "Principal";
-    private ListView listView;
+    private int []imagen = { R.drawable.mapita,R.mipmap.editar1,R.mipmap.borrar };
+    private ListView listView, listView1, listView2, listView3;
+    private Button btnAnterior, btnSiguiente;
     public MyData myData1;
-    private List<MyData> lista;
-    public static final String KEY = "+4xij6jQRSBdCymMxweza/uMYo+o0EUg";
+    private List<MyData> lista, lista1, lista2, lista3, list;
     public String archivo = "";
     public String usuario = "";
     public String json= "";
     public DesUtil desUtil;
-    private int[]logos ={R.mipmap.img,R.mipmap.img_2, R.mipmap.img_1};
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,92 +53,190 @@ public class Principal extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.listViewID);
         lista = new ArrayList<MyData>();
 
-        String aux = null;
-        Nya testJson = null;
-        String object = null;
-        TextView textito = findViewById(R.id.textito);
-        Intent intent = getIntent();
+        int numArchivo = getIntent().getExtras().getInt("numArchivo");
+        int numLista = getIntent().getExtras().getInt("numLista");
 
-        if (intent != null) {
-            if (intent.getExtras() != null) {
-                object = intent.getStringExtra("Usuario");
-                if (object != null) {
-                    usuario = object;
-                    textito.setText(object);
-                    archivo = object+".json";
-                    Log.d(TAG, object);
-                }
-                else{
-                    textito.setText("oops");
+        btnAnterior = (Button) findViewById(R.id.btnAnt);
+        btnSiguiente = (Button) findViewById(R.id.btnSig);
+
+
+        try {
+            BDInfo dbInfo = new BDInfo(Principal.this);
+            BDCuenta dbCuenta = new BDCuenta(Principal.this);
+            String completoTextoU = dbInfo.verInfo(numArchivo);
+
+
+            listView = (ListView) findViewById(R.id.listViewSitio);
+            lista = new ArrayList<MyData>();
+
+            listView1 = (ListView) findViewById(R.id.listViewMapa);
+            lista1 = new ArrayList<MyData>();
+
+            listView2 = (ListView) findViewById(R.id.listViewEditar);
+            lista2 = new ArrayList<MyData>();
+
+            listView3 = (ListView) findViewById(R.id.listViewQuitar);
+            lista3 = new ArrayList<MyData>();
+
+            boolean BucleArchivo = true;
+            int x = numLista;
+            while (BucleArchivo) {
+                if((dbCuenta.checarCuenta(numArchivo, x)) && (x < (numLista + 5))){
+                    String completoTexto = dbCuenta.verCuenta(numArchivo, x);
+
+                    json2List(completoTexto);
+                    for (MyData myData : list) {
+
+
+                        MyData cuenta = new MyData();
+                        MyData cuenta1 = new MyData();
+                        MyData cuenta2 = new MyData();
+                        MyData cuenta3 = new MyData();
+                        cuenta.setPswd(myData.getPswd());
+                        cuenta.setNombre(myData.getNombre());
+                        cuenta.setLocation(myData.getLocation());
+                        cuenta.setTipo(myData.isTipo());
+                        cuenta.setImageP(myData.getImageP());
+                        cuenta.setImage(myData.getImage());
+                        cuenta1.setImage(imagen[0]);
+                        cuenta2.setImage(imagen[1]);
+                        cuenta3.setImage(imagen[2]);
+                        lista.add(cuenta);
+                        lista1.add(cuenta1);
+                        lista2.add(cuenta2);
+                        lista3.add(cuenta3);
+                    }
+                    x = x + 1;
+                }else{
+                    BucleArchivo = false;
                 }
             }
 
-        }
-
-        if(isFileExits()){
-            Read();
-            json2List(json);
-            Log.d(TAG, json);
-
-            for (MyData myData1 : lista){
-                if (isNotNullAndNotEmpty(KEY)){
-                    desUtil.addStringKeyBase64(KEY);
-                }
-
-                String usuario = myData1.getNombre();
-                String contra = myData1.getPswd();
-                String usr = desUtil.desCifrar(usuario);
-                String pswd = desUtil.desCifrar(contra);
-
-                Log.d(TAG, usr);
-                Log.d(TAG, pswd);
-
-                myData1.setLogo(logos[(int)(Math.random() *3 )]);
-                myData1.setNombre(usr);
-                myData1.setPswd(pswd);
-
-                lista.add(myData1);
-                MiAdapter myAdapter = new MiAdapter(lista, getBaseContext());
-                listView.setAdapter(myAdapter);
+            if(numLista == 1){
+                btnAnterior.setEnabled(false);
+            }
+            if (!dbCuenta.checarCuenta(numArchivo, (numLista + 5))){
+                btnSiguiente.setEnabled(false);
             }
 
-
-        }
-        else{
-            Toast.makeText(getApplicationContext(), "No hay archivo", Toast.LENGTH_LONG).show();
-        }
+            MiAdapter myAdapter = new MiAdapter(lista, getBaseContext());
+            listView.setAdapter(myAdapter);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
+                {
+                    toast(i);
+                }
+            });
 /*
-        for (int i = 0; i<5; i++){
-            myData = new MyData();
-            myData.setPswd(String.format("Contraseña: %d" , (int)(Math.random()*1000000)));
+            MiAdapterEdit myAdapter1 = new MiAdapterEdit(lista1, getBaseContext());
+            listView1.setAdapter(myAdapter1);
+            listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    toast1( i + (numLista - 1));
+                }
+            });*/
 
-            if(i==0){
-                myData.setNombre("Discord");
-                myData.setLogo(logos[0]);
-            }
-            if(i==1){
-                myData.setNombre("Youtube");
-                myData.setLogo(logos[1]);
-            }
-            if(i==2){
-                myData.setNombre("Tumblr");
-                myData.setLogo(logos[2]);
-            }
-            if (i==3){
-                myData.setNombre("Twitter");
-                myData.setLogo(logos[3]);
-            }
-            if(i==4){
-                myData.setNombre("Reddit");
-                myData.setLogo(logos[4]);
-            }
+            MiAdapterEdit myAdapter2 = new MiAdapterEdit(lista2, getBaseContext());
+            listView2.setAdapter(myAdapter2);
+            listView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    toast2( i + (numLista - 1));
+                }
+            });
 
-            list.add(myData);
+            MiAdapterQuitar myAdapter3 = new MiAdapterQuitar(lista3, getBaseContext());
+            listView3.setAdapter(myAdapter3);
+            listView3.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    toast3( i + (numLista - 1));
+                }
+            });
+
+            btnAnterior.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent (Principal.this, Principal.class);
+                    intent.putExtra("numArchivo", numArchivo);
+                    intent.putExtra("numLista", numLista - 5);
+                    startActivity( intent );
+                }
+            });
+
+            btnSiguiente.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent (Principal.this, Principal.class);
+                    intent.putExtra("numArchivo", numArchivo);
+                    intent.putExtra("numLista", numLista + 5);
+                    startActivity( intent );
+                }
+            });
+
+        }catch(Exception e){
+            Toast.makeText(getBaseContext(), "Error al Cargar la Lista", Toast.LENGTH_SHORT).show();
         }
+    }
 
- */
+    private void toast(int i )
+    {
+        Toast.makeText(getBaseContext(), lista.get(i).getPswd(), Toast.LENGTH_SHORT).show();
+    }
+/*
+    private void toast1( int i )
+    {
+        int numArchivo = getIntent().getExtras().getInt("numArchivo");
+        int numLista = getIntent().getExtras().getInt("numLista");
+        Intent intent = new Intent (Principal.this, MapList.class);
+        intent.putExtra("numArchivo", numArchivo);
+        intent.putExtra("numLista", numLista);
+        intent.putExtra("numArchivoCuenta", (i + 1));
+        startActivity(intent);
+    }*/
 
+    private void toast2( int i )
+    {
+        int numArchivo = getIntent().getExtras().getInt("numArchivo");
+        int numLista = getIntent().getExtras().getInt("numLista");
+        Intent intent = new Intent (Principal.this, Agregar.class);
+        intent.putExtra("numArchivo", numArchivo);
+        intent.putExtra("numContext", 2);
+        intent.putExtra("numLista", numLista);
+        intent.putExtra("numArchivoCuenta", (i + 1));
+        startActivity(intent);
+    }
 
+    private void toast3( int i )
+    {
+        try {
+            BDCuenta dbCuenta = new BDCuenta(Principal.this);
+            int numArchivo = getIntent().getExtras().getInt("numArchivo");
+            int numLista = getIntent().getExtras().getInt("numLista");
+            if (numLista == (i+1) && numLista > 1 && !dbCuenta.checarCuenta(numArchivo, (numLista + 1))){numLista -= 5;}
+            boolean BucleArchivo = true;
+            int x = (i + 1);
+            while (BucleArchivo) {
+                if (dbCuenta.checarCuenta(numArchivo, x) & dbCuenta.checarCuenta(numArchivo, (x + 1))){
+                    int numArchivoCuenta = getIntent().getExtras().getInt("numArchivoCuenta");
+                    String completoTexto = dbCuenta.verCuenta(numArchivo, (x + 1));
+                    dbCuenta.editarCuenta(numArchivo, x, completoTexto);
+
+                    x = x + 1;
+                }
+                if (dbCuenta.checarCuenta(numArchivo, x) & !dbCuenta.checarCuenta(numArchivo, (x + 1))){
+                    dbCuenta.borrarCuenta(numArchivo, x);
+
+                    Intent intent = new Intent (Principal.this, Principal.class);
+                    intent.putExtra("numArchivo", numArchivo);
+                    intent.putExtra("numLista", numLista);
+                    startActivity( intent );
+                    BucleArchivo = false;
+                }
+            }
+        }catch(Exception e){}
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -168,40 +270,6 @@ public class Principal extends AppCompatActivity {
         Toast.makeText(this, selection, Toast.LENGTH_SHORT).show();
         return super.onOptionsItemSelected(item);
     }
-
-    private File getFile() {
-        return new File(getDataDir(), archivo);
-    }
-
-    private boolean isFileExits() {
-        File file = getFile();
-        if (file == null) {
-            return false;
-        }
-        return file.isFile() && file.exists();
-    }
-
-    public boolean Read() {
-        if (!isFileExits()) {
-            return false;
-        }
-        File file = getFile();
-        FileInputStream fileInputStream = null;
-        byte[] bytes = null;
-        bytes = new byte[(int) file.length()];
-        try {
-            fileInputStream = new FileInputStream(file);
-            fileInputStream.read(bytes);
-            json = new String(bytes);
-            Log.d(TAG, json);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     public void json2List(String json) {
         Gson gson = null;
         String mensaje = null;
@@ -212,17 +280,13 @@ public class Principal extends AppCompatActivity {
         gson = new Gson();
         Type listType = new TypeToken<ArrayList<MyData>>() {
         }.getType();
-        lista = gson.fromJson(json, listType);
-        if (lista == null || lista.size() == 0) {
+        list = gson.fromJson(json, listType);
+        if (list == null || list.size() == 0) {
             Toast.makeText(getApplicationContext(), "Error list is null or empty", Toast.LENGTH_LONG).show();
             return;
         }
     }
 
-    public boolean isNotNullAndNotEmpty( String aux )
-    {
-        return aux != null && aux.length() > 0;
-    }
 
     public void aGuardar(){
         Intent intent =  new Intent(getBaseContext(), Agregar.class);

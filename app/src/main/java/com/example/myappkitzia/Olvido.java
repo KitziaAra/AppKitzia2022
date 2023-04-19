@@ -21,6 +21,7 @@ import com.example.myappkitzia.Recursos.DesUtil;
 import com.example.myappkitzia.Recursos.Digest;
 import com.example.myappkitzia.Recursos.MyInfo;
 import com.example.myappkitzia.Recursos.Nya;
+import com.example.myappkitzia.SQLite.BDInfo;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -40,12 +41,13 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Olvido extends AppCompatActivity {
     private List<MyInfo> list;
     public static String TAG = "mensaje";
     public EditText userName, Mail;
-    public String json, json2, nuevaContra, HTMLCorreo, mensaje;
+    public String json, json2, HTMLCorreo, mensaje;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +87,66 @@ public class Olvido extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Correo inválido", Toast.LENGTH_LONG).show();
                 return;
             }else {
-                Read();
+                try {
+                    DesUtil myDes = new DesUtil();
+
+                    String MailCorreo = "";
+                    String HTMLCorreo = "";
+                    String nombreUsuario = "";
+                    String nuevaContra = "";
+                    int numArchivo = 0;
+
+                    boolean BucleArchivo = true;
+                    int x = 1;
+                    while (BucleArchivo) {
+                        BDInfo bdInfo = new BDInfo(Olvido.this);
+                        if (bdInfo.checarInfo(x)) {
+                            String textito = bdInfo.verInfo(x);
+
+                            json2List(textito);
+                            for (MyInfo myInfo : list) {
+                                if (myInfo.getNombre().equals(userName.getText().toString()) && myInfo.getCorreo().equals(Mail.getText().toString())) {
+                                    mensaje = "Usuario Encontrado";
+                                    MailCorreo = myInfo.getCorreo();
+                                    nombreUsuario = myInfo.getNombre();
+                                    nuevaContra = String.format(String.valueOf(Math.random() * 10));
+
+                                    Digest digest = new Digest();
+                                    byte[] txtByte = digest.createSha1(nombreUsuario + nuevaContra);
+                                    String Sha1Password = digest.bytesToHex(txtByte);
+
+                                    json2 = lista2Json(myInfo.getNombre(), Sha1Password, Integer.toString(myInfo.getEdad()), myInfo.getGenero(), myInfo.getCorreo(),
+                                            myInfo.getFecha(), myInfo.getEstacion(), myInfo.isCafe());
+
+                                    BucleArchivo = false;
+                                }
+                            }
+                        } else {
+                            mensaje = "Usuario no Encontrado";
+                            BucleArchivo = false;
+                        }
+                    }
+
+                    if ("Usuario Encontrado".equals(mensaje)) {
+                        HTMLCorreo = "<html> <head> <link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=Mandali&family=Satisfy\"> <title>Contraseña olvidada</title> <meta charset=\"UTF-8\"> </head> <style> img{ width: 100%; height: 300px; object-fit: cover;} body{background-color: #3670B3; font-family: Mandali;} .div2{width: 70%; font-size-adjust: 16; text-align: justify; background-color: #21456E; padding: 5px; color: #90BDF0; box-shadow: 12px 12px 8px #292828;} </style> <body> <div align=\"center\"> <img  src=\"https://w.wallha.com/ws/14/RE6cvxD4.jpg\"> <br><br> <div class=\"div2\"> <br> <Font size=\"14\"><b><i>Hola, " + nombreUsuario + ": </i></b><br> Has solicitado una nueva contraseña para tu cuenta con el correo " + MailCorreo + ". Tu contraseña temporal es: </Font><br> <p align=\"center\" ><Font size=\"24\" color=\"black\"><b><span  style=\"background-color: #FFFCF2;\">" + nuevaContra + "</span></b></Font></p> <Font size=\"14\">Si no solicitaste un cambio de contraseña, ignora este mensaje.</Font> <p align=\"right\" style=\"font-family: Satisfy;\"><Font size=\"14\">Kitzia</Font></p> <br> </div> <br><br> <img src=\"https://wallpapercave.com/wp/wp11118723.jpg\"> </div> </body> </html>";
+                        MailCorreo = myDes.cifrar(MailCorreo);
+                        HTMLCorreo = myDes.cifrar(HTMLCorreo);
+
+                        if (sendInfo(MailCorreo, HTMLCorreo)) {
+                            mensaje = "Se envío el Correo";
+                            Intent intent = new Intent(Olvido.this, Recupera.class);
+                            intent.putExtra("numArchivo", numArchivo);
+                            intent.putExtra("valorPass", nuevaContra);
+                            startActivity(intent);
+                        } else {
+                            mensaje = "Error en el envío del Correo";
+                        }
+                    }
+
+                } catch (Exception e) {
+                    mensaje = "Error en el Archivo";
+                }
+                /*
                 json2List(json);
 
                 String usuario = userName.getText().toString();
@@ -110,15 +171,15 @@ public class Olvido extends AppCompatActivity {
                         i= 1;
                     }
                 }
-                try{
-                    if (writeFile(json2)){
-                        i = 2;
-                        return;
-                    }
-                }
-                catch (IOException e){
-                    e.printStackTrace();
-                }
+                //try{
+                    //if (writeFile(json2)){
+                        //i = 2;
+                        //return;
+                    //}
+                //}
+                //catch (IOException e){
+                    //e.printStackTrace();
+                //}
 
                 if (i == 0) {
                     Toast.makeText(getApplicationContext(), "Usuario no encontrado :/", Toast.LENGTH_LONG).show();
@@ -143,6 +204,8 @@ public class Olvido extends AppCompatActivity {
                     }
                 }
             }
+            */
+            }
 
 
         }
@@ -151,17 +214,18 @@ public class Olvido extends AppCompatActivity {
 
 
 
-    public boolean sendInfo( String Correo )
+    public boolean sendInfo( String Correo , String HTML)
     {
         String TAG = "App";
         JsonObjectRequest jsonObjectRequest = null;
         JSONObject jsonObject = null;
-        String url = "https://us-central1-nemidesarrollo.cloudfunctions.net/function-test";
+        String url = "https://us-central1-nemidesarrollo.cloudfunctions.net/envio_correo";
         RequestQueue requestQueue = null;
 
         jsonObject = new JSONObject( );
         try {
-            jsonObject.put("Correo" , Correo );
+            jsonObject.put("correo" , Correo);
+            jsonObject.put("mensaje", HTML);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -182,53 +246,8 @@ public class Olvido extends AppCompatActivity {
 
         return true;
     }
-
-
-
-    public boolean Read() {
-        if (!isFileExits()) {
-            return false;
-        }
-        File file = getFile();
-        FileInputStream fileInputStream = null;
-        byte[] bytes = null;
-        bytes = new byte[(int) file.length()];
-        try {
-            fileInputStream = new FileInputStream(file);
-            fileInputStream.read(bytes);
-            json = new String(bytes);
-            Log.d(TAG, json);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    private boolean writeFile(String text) throws IOException {
-        File file = null;
-        FileOutputStream fileOutputStream = null;
-        try {
-            file = getFile();
-            fileOutputStream = new FileOutputStream(file);
-            fileOutputStream.write(text.getBytes(StandardCharsets.UTF_8));
-            fileOutputStream.close();
-            return true;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-
-
-
     public void json2List(String json) {
         Gson gson = null;
-        String mensaje = null;
         if (json == null || json.length() == 0) {
             Toast.makeText(getApplicationContext(), "Error json null or empty", Toast.LENGTH_SHORT).show();
             return;
@@ -278,7 +297,8 @@ public class Olvido extends AppCompatActivity {
         return json;
     }
 
-    public String correoAJson(String mail, String html){
+
+    /*public String correoAJson(String mail, String html){
         Correito correo = new Correito();
         Gson gson = new Gson();
 
@@ -289,18 +309,6 @@ public class Olvido extends AppCompatActivity {
 
         return jsonCorreo;
     }
+*/
 
-
-
-    private File getFile() {
-        return new File(getDataDir(), Registro.archivo);
-    }
-
-    private boolean isFileExits() {
-        File file = getFile();
-        if (file == null) {
-            return false;
-        }
-        return file.isFile() && file.exists();
-    }
 }

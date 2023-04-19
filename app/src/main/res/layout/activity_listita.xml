@@ -7,45 +7,33 @@
     android:background="@color/azul_oscuro2"
     tools:context=".Listita">
 
-    <ImageView
-        android:id="@+id/imgAvatar"
+    <ListView
+        android:id="@+id/listViewSitio"
+        android:layout_width="250dp"
+        android:layout_height="460dp"
+        app:layout_constraintStart_toStartOf="parent"
+         />
+
+    <ListView
+        android:id="@+id/listViewMapa"
         android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_weight="1"
-        tools:srcCompat="@tools:sample/avatars" />
+        android:layout_height="460dp"
+        app:layout_constraintEnd_toStartOf="@+id/listViewEditar"
+        app:layout_constraintTop_toBottomOf="@+id/textViewLM1" />
 
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="TextView"
-        android:textColor="@color/azulito" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="TextView"
-        android:textColor="@color/azulito" />
-
-    <ImageButton
-        android:id="@+id/btnEditar"
+    <ListView
+        android:id="@+id/listViewEditar"
         android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_weight="1"
-        android:background="@color/azulito"
-        android:foreground="@mipmap/editar1"
-        tools:ignore="SpeakableTextPresentCheck" />
+        android:layout_height="460dp"
+        app:layout_constraintEnd_toStartOf="@+id/ListViewMapa"
+        app:layout_constraintTop_toBottomOf="@+id/textViewLM1" />
 
-    <ImageButton
-        android:id="@+id/btnAñadir"
+    <ListView
+        android:id="@+id/listViewQuitar"
         android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_weight="1"
-        android:background="@color/azulito"
-        android:foreground="@mipmap/borrar"
-        app:srcCompat="@android:drawable/ic_menu_add"
-        tools:ignore="SpeakableTextPresentCheck" />
+        android:layout_height="460dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewLM1" />
+
+
 </LinearLayout>

@@ -52,10 +52,7 @@ public class Login extends AppCompatActivity {
         super.onResume();
         setContentView(R.layout.activity_login);
 
-        if(!isFileExits()){
-            btnOlv.setEnabled(false);
-            btnInicio.setEnabled(false);
-        }
+
     }
 
     public void acceder() {
@@ -63,50 +60,6 @@ public class Login extends AppCompatActivity {
         startActivity(intent);
     }
 
-
-/* para checar el archivo */
-
-    private File getFile() {
-        return new File(getDataDir(), Registro.archivo);
-    }
-
-    private boolean isFileExits() {
-        File file = getFile();
-        if (file == null) {
-            return false;
-        }
-        return file.isFile() && file.exists();
-    }
-
-/* leer el archivo */
-
-    private boolean Leer(){
-        if(!isFileExits()){
-            Log.d(TAG, "no hay archivo");
-            return false;
-
-        }
-
-        File file = getFile();
-        FileInputStream fileInputStream = null;
-        byte bytes[]= null;
-        bytes = new byte[(int)file.length()];
-
-        try{
-            fileInputStream = new FileInputStream(file);
-            fileInputStream.read(bytes);
-            json = new String(bytes);
-            Log.d(TAG, json);
-            fileInputStream.close();
-        }
-        catch (FileNotFoundException e){
-            e.printStackTrace();
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-        return false;
-    }
 
     public void json2List(String json) {
         Gson gson = null;
@@ -147,7 +100,7 @@ public class Login extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Llena todos los campos por favor", Toast.LENGTH_LONG).show();
             return;
         }
-        Leer();
+        //Leer();
         json2List(json);
 
         Digest sha1 = new Digest();

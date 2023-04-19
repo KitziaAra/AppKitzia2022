@@ -37,11 +37,38 @@
 
     <ListView
         android:id="@+id/listViewID"
-        android:layout_width="399dp"
-        android:layout_height="401dp"
-        android:layout_marginTop="128dp"
+        android:layout_width="383dp"
+        android:layout_height="397dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.478"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textito" />
+
+    <Button
+        android:id="@+id/btnAnt"
+        android:layout_width="120dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#0067B8"
+        android:text="Anterior"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/listViewID"
+        app:strokeColor="#FFFFFF"
+        app:strokeWidth="2dp" />
+
+    <Button
+        android:id="@+id/btnSig"
+        android:layout_width="120dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:backgroundTint="#0067B8"
+        android:text="Siguiente"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/listViewID"
+        app:strokeColor="#FFFFFF"
+        app:strokeWidth="2dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,6 +13,8 @@ import android.widget.Toast;
 import com.example.myappkitzia.Recursos.Digest;
 import com.example.myappkitzia.Recursos.MyInfo;
 import com.example.myappkitzia.Recursos.Nya;
+import com.example.myappkitzia.SQLite.BDInfo;
+import com.example.myappkitzia.SQLite.BDTablas;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -42,8 +44,8 @@ public class Login2 extends AppCompatActivity {
         EditText passws = findViewById(R.id.editTxtPswd);
         olvi = findViewById(R.id.btnOlvi);
 
-        Read();
-        json2List(json);
+        //Read();
+        //json2List(json);
 
         acceso.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,79 +78,65 @@ public class Login2 extends AppCompatActivity {
 
     }
 
-
-    public boolean Read() {
-        if (!isFileExits()) {
-            return false;
-        }
-        File file = getFile();
-        FileInputStream fileInputStream = null;
-        byte[] bytes = null;
-        bytes = new byte[(int) file.length()];
-        try {
-            fileInputStream = new FileInputStream(file);
-            fileInputStream.read(bytes);
-            json = new String(bytes);
-            Log.d(TAG, json);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     public void json2List(String json) {
         Gson gson = null;
         String mensaje = null;
         if (json == null || json.length() == 0) {
             Toast.makeText(getApplicationContext(), "Error json null or empty", Toast.LENGTH_SHORT).show();
             return;
-        }
+         }
         gson = new Gson();
         Type listType = new TypeToken<ArrayList<MyInfo>>() {
         }.getType();
         list = gson.fromJson(json, listType);
-        if (list == null || list.size() == 0) {
+       if (list == null || list.size() == 0) {
             Toast.makeText(getApplicationContext(), "Error list is null or empty", Toast.LENGTH_LONG).show();
             return;
         }
     }
 
-    private File getFile() {
-        return new File(getDataDir(), Registro.archivo);
-    }
-
-    private boolean isFileExits() {
-        File file = getFile();
-        if (file == null) {
-            return false;
-        }
-        return file.isFile() && file.exists();
-    }
 
     public void acceso() {
-        int i = 0;
-        for (MyInfo myInfo : list) {
-            if (myInfo.getNombre().equals(usr) && myInfo.getPswd().equals(pswdCifr)) {
-                Intent intent = new Intent(getBaseContext(), Principal.class);
-                Nya testJson = new Nya();
-                testJson.setNombre(usr);
-                testJson.setPswd(passw);
-                intent.putExtra("Hola", String.format("Hola mundo %d" , (int)(Math.random()*1000) ));
-                intent.putExtra("Usuario", usr);
-                intent.putExtra("Contraseña", pswdCifr);
-                startActivity(intent);
-                i = 1;
+        String mnsj = "";
+        try {
+            boolean BucleArchivo = true;
+            int x = 1;
+            int numArchivo = 0;
+            while (BucleArchivo) {
+                BDInfo bdInfo = new BDInfo(Login2.this);
+                if (bdInfo.checarInfo(x)) {
+                    String textoInfo = bdInfo.verInfo(x);
 
+                    json2List(textoInfo);
+                    for (MyInfo myInfo : list) {
+                        String usuario = myInfo.getNombre();
+                        String pswd = myInfo.getPswd();
+
+                        if (myInfo.getNombre().equals(usr) && myInfo.getPswd().equals(pswdCifr)) {
+                            numArchivo = x;
+                            BucleArchivo = false;
+                            mnsj = "Usuario encontrado";
+
+                        } else {
+                            x = x + 1;
+                        }
+                    }
+                }else{
+                        mnsj = "Usuario no Encontrado";
+                        BucleArchivo = false;
+                    }
+                }
+            if (mnsj=="Usuario encontrado"){
+                Intent intent = new Intent(getBaseContext(), Principal.class);
+
+                intent.putExtra("numArchivo", numArchivo);
+                intent.putExtra("numLista", 1);
+                startActivity(intent);
             }
         }
-        if (i == 0) {
-            Toast.makeText(getApplicationContext(), "El usuario o contraseña son incorrectos ", Toast.LENGTH_LONG).show();
+        catch (Exception e){
+            mnsj = e.toString();
         }
-    }
-
-    public void enviarExtra(){
-
+        Toast.makeText(Login2.this, mnsj, Toast.LENGTH_SHORT).show();
     }
 }

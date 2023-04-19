@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,16 +17,19 @@ import android.widget.Toast;
 
 import com.example.myappkitzia.Recursos.Digest;
 import com.example.myappkitzia.Recursos.MyInfo;
-import com.example.myappkitzia.SQLite.BDQuerys;
-import com.example.myappkitzia.SQLite.Usuario;
+import com.example.myappkitzia.SQLite.BDInfo;
+import com.example.myappkitzia.SQLite.BDTablas;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Registro extends AppCompatActivity {
     public String TAG = "Registro";
@@ -35,8 +39,8 @@ public class Registro extends AppCompatActivity {
     private RadioGroup Gen;
     private RadioButton Fem, Masc, Otro;
     private Button btnRegistro;
-    public static final String archivo = "registro.json";
     private String json2;
+    private List<MyInfo> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,7 +141,7 @@ public class Registro extends AppCompatActivity {
 
 
                 json2 = lista2Json(Nombre, pswdCifr, Edad, Genero, Correo, Fecha, estacion, cafe);
-
+/*
                 try {
                     if (writeFile(json2)) {
                         vaciar();
@@ -147,37 +151,60 @@ public class Registro extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                Toast.makeText(getApplicationContext(), "ERROR", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "ERROR", Toast.LENGTH_LONG).show();*/
 
-/* no jalo aaaaaaaaaaaaaaah
+// si jalo AAAAAAAAAA
 
                 String mnsj = "";
                 try {
-                    BDQuerys bdQuerys = new BDQuerys(Registro.this);
-                    Usuario usuario = new Usuario();
-                    usuario.setUsuario(Nombre);
-                    usuario.setContraseña(pswdCifr);
-                    usuario.setEdad(Integer.parseInt(Edad));
-                    usuario.setCorreo(Correo);
-                    usuario.setFecha(Fecha);
-                    usuario.setEstacion(estacion);
-                    usuario.setGenero(Genero);
-                    usuario.setCafe(String.valueOf(cafe));
+                    boolean BucleArchivo = true;
+                    int x = 1;
+                    while (BucleArchivo) {
+                        BDInfo bdInfo = new BDInfo(Registro.this);
+                        if (bdInfo.checarInfo(x)) {
+                            String textoInfo = bdInfo.verInfo(x);
 
-                    long estado = bdQuerys.agregarCuenta(Nombre, pswdCifr, Integer.parseInt(Edad), Correo, Fecha, estacion, Genero, String.valueOf(cafe));
+                            json2List(textoInfo);
+                            for (MyInfo info : list) {
+                                String usrName = info.getNombre();
+                                String mail = info.getCorreo();
 
-                    if (estado>0){
-                        mnsj = "Usuario registrado";
-                        vaciar();
-                    }
-                    else {
-                        mnsj = "Error al registrar";
+                                if (Nombre.equals(usrName)) {
+
+                                    mnsj = "Numero Ya Registrado";
+                                    BucleArchivo = false;
+                                } else {
+                                    if(Correo.equals(mail)){
+                                        mnsj = "Correo Ya Registrado";
+                                    }
+                                    else{
+                                        x = x + 1;}
+                                }
+                            }
+                        }
+                        else {
+                            long status = bdInfo.insertarInfo(x, json2);
+                            if (status > 0) {
+                                mnsj = "Usuario Registrado";
+                                vaciar();
+                                BucleArchivo = false;
+                                new Handler( ).postDelayed(new Runnable() {
+                                    @Override
+                                    public void run(){
+                                        Intent intent = new Intent( Registro.this, Login2.class);
+                                        startActivity( intent );
+                                    }
+                                } , 1500 );
+                            } else {
+                                mnsj = "Error al Hacer Registro";
+                            }
+                        }
                     }
                 }
                 catch (Exception e){
                     mnsj = e.toString();
                 }
-                Toast.makeText(Registro.this, mnsj, Toast.LENGTH_SHORT).show();*/
+                Toast.makeText(Registro.this, mnsj, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -239,28 +266,26 @@ public class Registro extends AppCompatActivity {
         return json;
     }
 
+    public void json2List(String json) {
+        Gson gson = null;
+
+        String mensaje = null;
+        if (json == null || json.length() == 0) {
+            Toast.makeText(getApplicationContext(), "Error json null or empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        gson = new Gson();
+        Type listType = new TypeToken<ArrayList<MyInfo>>() {
+        }.getType();
+        list = gson.fromJson(json, listType);
+        if (list == null || list.size() == 0) {
+            Toast.makeText(getApplicationContext(), "Error list is null or empty", Toast.LENGTH_LONG).show();
+            return;
+        }
+    }
+
  //para escribir en el archivo
 
-    private File getFile() {
-        return new File(getDataDir(), archivo);
-    }
-
-    private boolean writeFile(String text) throws IOException {
-        File file = null;
-        FileOutputStream fileOutputStream = null;
-        try {
-            file = getFile();
-            fileOutputStream = new FileOutputStream(file);
-            fileOutputStream.write(text.getBytes(StandardCharsets.UTF_8));
-            fileOutputStream.close();
-            return true;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
 
  //botones
 
